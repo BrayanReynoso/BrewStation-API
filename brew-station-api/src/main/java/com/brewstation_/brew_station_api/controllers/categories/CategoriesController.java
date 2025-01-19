@@ -43,4 +43,11 @@ public class CategoriesController {
         );
     }
 
+    @DeleteMapping("/category/change-status/{uid}")
+    public ResponseEntity<CustomResponse<Categories>> changeStatus(@PathVariable("uid") String uid) {
+        return new ResponseEntity<>(
+                this.categoryService.changeStatusByUid(uid), HttpStatus.OK
+        );
+    }
+
 }

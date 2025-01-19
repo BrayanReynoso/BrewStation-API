@@ -32,14 +32,11 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CustomResponse<Categories> getCategoryById(String uid) {
         Optional<Categories> category = categoryRepository.findByUid(uid);
-        if (!category.isPresent()) {
-            return new CustomResponse<>(
+        return category.map(categories -> new CustomResponse<>(
+                categories, "Category Found!", false, 200
+        )).orElseGet(() -> new CustomResponse<>(
                 null, "Category not found", true, 400
-            );
-        }
-        return new CustomResponse<>(
-                category.get(), "Category Found!", false, 200
-        );
+        ));
     }
 
     @Transactional(rollbackFor = {SQLException.class})
@@ -79,6 +76,25 @@ public class CategoryService {
         Categories savedCategory = categoryRepository.save(categoryToUpdate);
         return new CustomResponse<>(
                 savedCategory, "Category updated successfully!", false, 200
+        );
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public CustomResponse<Categories> changeStatusByUid(String uid) {
+        // Buscar la categoría por UID
+        Optional<Categories> existCategory = categoryRepository.findByUid(uid);
+        if (existCategory.isPresent()){
+            existCategory.get().setActive(!existCategory.get().getActive());
+            return new CustomResponse<>(
+                    this.categoryRepository.saveAndFlush(
+                            existCategory.get()),
+                    "Successful change status",
+                    false,
+                    200
+            );
+        }
+        return new CustomResponse<>(
+                null, "Category not found", true, 404
         );
     }
 }
