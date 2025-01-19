@@ -35,4 +35,12 @@ public class CategoriesController {
                 this.categoryService.saveCategory(category), HttpStatus.CREATED
         );
     }
+
+    @PutMapping("/category/update/{uid}")
+    public ResponseEntity<CustomResponse<Categories>> updateCategory(@PathVariable("uid") String uid,@RequestBody Categories category) {
+        return  new ResponseEntity<>(
+                this.categoryService.updateCategory(uid,category), HttpStatus.OK
+        );
+    }
+
 }

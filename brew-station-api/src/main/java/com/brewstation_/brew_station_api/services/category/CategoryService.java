@@ -58,4 +58,27 @@ public class CategoryService {
                 savedCategory, "Category saved successfully!", false, 201
         );
     }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public CustomResponse<Categories> updateCategory(String uid, Categories updatedCategory) {
+        // Verificar si la categoría existe
+        Optional<Categories> existingCategory = categoryRepository.findByUid(uid);
+        if (!existingCategory.isPresent()) {
+            return new CustomResponse<>(
+                    null, "Category not found", true, 404
+            );
+        }
+
+        // Actualizar los campos de la categoría existente
+        Categories categoryToUpdate = existingCategory.get();
+        categoryToUpdate.setName(updatedCategory.getName());
+        categoryToUpdate.setDescription(updatedCategory.getDescription());
+        categoryToUpdate.setActive(updatedCategory.getActive());
+
+        // Guardar los cambios
+        Categories savedCategory = categoryRepository.save(categoryToUpdate);
+        return new CustomResponse<>(
+                savedCategory, "Category updated successfully!", false, 200
+        );
+    }
 }
