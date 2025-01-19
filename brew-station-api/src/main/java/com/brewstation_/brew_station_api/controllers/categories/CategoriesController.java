@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,10 +22,17 @@ public class CategoriesController {
     public ResponseEntity<CustomResponse<List<Categories>>> getAllCategories() {
         return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
-    @GetMapping("/get-by-uid/{uid}")
+    @GetMapping("/category/get-by-uid/{uid}")
     public ResponseEntity<CustomResponse<Categories>> getByUid(@PathVariable("uid") String uid) {
         return  new ResponseEntity<>(
                 categoryService.getCategoryById(uid), HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/category")
+    public ResponseEntity<CustomResponse<Categories>> saveCategory(@RequestBody Categories category) {
+        return new ResponseEntity<>(
+                this.categoryService.saveCategory(category), HttpStatus.CREATED
         );
     }
 }

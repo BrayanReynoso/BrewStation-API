@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,23 @@ public class CategoryService {
         }
         return new CustomResponse<>(
                 category.get(), "Category Found!", false, 200
+        );
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public CustomResponse<Categories> saveCategory(Categories category) {
+        // Verificar si la categoría ya existe por su UID (o algún campo único)
+        Optional<Categories> existingCategory = categoryRepository.findByUid(category.getUid());
+        if (existingCategory.isPresent()) {
+            return new CustomResponse<>(
+                    null, "Category already exists", true, 400
+            );
+        }
+
+        // Guardar la categoría
+        Categories savedCategory = categoryRepository.save(category);
+        return new CustomResponse<>(
+                savedCategory, "Category saved successfully!", false, 201
         );
     }
 }
