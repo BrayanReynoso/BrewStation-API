@@ -60,7 +60,7 @@ public class CategoryService {
     public CustomResponse<Categories> updateCategory(String uid, Categories updatedCategory) {
         // Verificar si la categoría existe
         Optional<Categories> existingCategory = categoryRepository.findByUid(uid);
-        if (!existingCategory.isPresent()) {
+        if (existingCategory.isEmpty()) {
             return new CustomResponse<>(
                     null, "Category not found", true, 404
             );
