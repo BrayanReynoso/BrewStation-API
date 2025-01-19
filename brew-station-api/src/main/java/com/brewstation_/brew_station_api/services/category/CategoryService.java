@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -22,9 +23,21 @@ public class CategoryService {
     public CustomResponse<List<Categories>> getAllCategories() {
         List<Categories> categories = categoryRepository.findAll();
         if (!categories.isEmpty()) {
-           return new CustomResponse<>();
+           return new CustomResponse<>(null, "Error Data is empty", true, 400);
         }
         return new CustomResponse<>();
 
+    }
+    @Transactional(readOnly = true)
+    public CustomResponse<Categories> getCategoryById(String uid) {
+        Optional<Categories> category = categoryRepository.findByUid(uid);
+        if (!category.isPresent()) {
+            return new CustomResponse<>(
+                null, "Category not found", true, 400
+            );
+        }
+        return new CustomResponse<>(
+                category.get(), "Category Found!", false, 200
+        );
     }
 }
